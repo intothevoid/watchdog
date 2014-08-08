@@ -112,7 +112,7 @@ if __name__ == '__main__':
 	emailaddr = config.get('alerts', 'recplist')
 
 	#Description tag
-	desc = config.get('reportserver','desc')
+	desc = 'watchdog script report'
 
 	#Do argument vector check
 	if len(argv) != 1:
