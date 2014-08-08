@@ -11,6 +11,7 @@ Features -
 4. Monitor CPU usage of web server
 5. Monitor disk usage of web server
 6. Monitor various services (such as Apache, MySQL etc.) with ability to restart
+7. Ability to set max no. of alerts per day to prevent flooding email inbox
 
 Note:
 
