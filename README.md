@@ -13,6 +13,7 @@ Features -
 6. Monitor various services (such as Apache, MySQL etc.) with ability to restart
 
 Note:
+
 1. Works only on Linux
 2. Sendmail needs to be configured for correct email send functionality
 3. For correct functioning add a cron job which executes the script approx. every 5 mins depending on frequency
