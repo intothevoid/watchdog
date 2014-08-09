@@ -15,14 +15,59 @@ logger = None
 g_logfile = '/home/username/watchdog/watchdog.log'
 g_cfgfile = '/home/username/watchdog/settings.cfg'
 
+
 def usage():
 	print('Correct usage watchdog.py <no-args-supported yet>')
+
+
+#Function to perform basic TCP check by connecting on specified port
+def tcp_test(server_info):
+	cpos = server_info.find(':')
+	try:
+		sock = socket()
+		sock.settimeout(10)
+		sock.connect((server_info[:cpos], int(server_info[cpos+1:])))
+		sock.close()
+		return True
+	except:
+		return False
+
+
+#Function to perform HTTP URL open check
+def http_test(server_info):
+	try:
+		data = urlopen(server_info).read()
+		return True
+	except:
+		return False
+
+
+#Wrapper for above connection functions
+def server_test(test_type, server_info):
+	if test_type.lower() == 'tcp':
+		return tcp_test(server_info)
+	elif test_type.lower() == 'http':
+		return http_test(server_info)
+
+#Check if specified service is running. Restart if needed
+def service_check(service_name, restart):
+	output = subprocess.check_output(['ps', '-A'])
+	if service_name in output:
+		return True
+	else:
+		#Try to restart
+		if restart:
+			logger.warning('Trying to restart %s' % (service_name))
+			system('service %s start' % (service_name))
+		return False
+
 
 #Check disk space usage. Return percentage
 def du_check():
 	df = os.popen("df -h /dev/sda1 | awk 'NR > 1 {print (100 - $5)}'")
 	space = df.read()
 	return space
+
 
 #Get CPU usage
 def getCPUAvg():
@@ -31,6 +76,7 @@ def getCPUAvg():
 	except OSError, e:
 		logger.error('Exception:Unable to obtain CPU load average.')
 	return cpuload
+
 
 #Send an error email to emails specified in configuration file
 def send_error(test_type, server_info, email_address, message):
@@ -59,6 +105,7 @@ def send_error(test_type, server_info, email_address, message):
 			logger.info('Sent email. Content:%s' % (body))
 	else:
 		logger.warning('Maximum threshold for daily alerts has been reached.')
+
 
 #Logging setup
 def logsetup():
@@ -118,7 +165,18 @@ if __name__ == '__main__':
 	if len(argv) != 1:
 		print('Wrong number of arguments provided')
 		usage()
-	
+
+	#Do TCP connection check
+	if not server_test(testtype, tcpurl):
+		logger.error('Unable to connect to the specified server')
+		send_error(testtype, tcpurl, emailaddr, "Failed to connect to server")
+
+	#Do HTTP URL open connection check
+	testtype = 'http'
+	if not server_test(testtype, httpurl):
+		logger.error('Failed to receive HTTP reply from specified server')
+		send_error(testtype, tcpurl, emailaddr, "Failed to receive HTTP reply from Server.")
+
 	#Services running check
 	svcstr = config.get('services', 'list')
 	brestart = config.getboolean('services','restart')
