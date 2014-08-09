@@ -132,7 +132,7 @@ def resetalertcount():
 #Main function
 if __name__ == '__main__':
 	#Initial test type
-	testtype = 'default'
+	testtype = 'tcp'
 
 	#Read configuration
 	config = ConfigParser.RawConfigParser()
