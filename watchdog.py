@@ -12,8 +12,8 @@ import logging
 
 #For logging
 logger = None
-g_logfile = '/home/username/watchdog/watchdog.log'
-g_cfgfile = '/home/username/watchdog/settings.cfg'
+g_logfile = 'watchdog.log'
+g_cfgfile = 'settings.cfg'
 
 
 def usage():
