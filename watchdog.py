@@ -1,3 +1,7 @@
+# Watchdog - Python script to monitor a Linux based webserver
+# Copyright (C) 2013-2014 Karan Kadam
+# License: http://www.gnu.org/licenses/gpl.html GPL version 2 or higher
+
 #!/usr/bin/env python
 
 import os
